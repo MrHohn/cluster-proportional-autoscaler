@@ -35,6 +35,11 @@ type AutoScalerConfig struct {
 	DefaultParams     configMapData
 	PollPeriodSeconds int
 	PrintVer          bool
+
+	PrometheusAddr      string
+	PrometheusPort      int
+	PrometheusPath      string
+	PrometheusNamespace string
 }
 
 // NewAutoScalerConfig returns a Autoscaler config
@@ -43,6 +48,11 @@ func NewAutoScalerConfig() *AutoScalerConfig {
 		Namespace:         os.Getenv("MY_POD_NAMESPACE"),
 		PollPeriodSeconds: 10,
 		PrintVer:          false,
+
+		PrometheusAddr:      "0.0.0.0",
+		PrometheusPort:      10054,
+		PrometheusPath:      "/metrics",
+		PrometheusNamespace: "cluster-proportional-autoscaler",
 	}
 }
 
@@ -121,4 +131,8 @@ func (c *AutoScalerConfig) AddFlags(fs *pflag.FlagSet) {
 	fs.IntVar(&c.PollPeriodSeconds, "poll-period-seconds", c.PollPeriodSeconds, "The time, in seconds, to check cluster status and perform autoscale.")
 	fs.BoolVar(&c.PrintVer, "version", c.PrintVer, "Print the version and exit.")
 	fs.Var(&c.DefaultParams, "default-params", "Default parameters(JSON format) for auto-scaling. Will create/re-create a ConfigMap with this default params if ConfigMap is not present.")
+	fs.StringVar(&c.PrometheusAddr, "prometheus-addr", c.PrometheusAddr, "HTTP address to bind metrics server to.")
+	fs.IntVar(&c.PrometheusPort, "prometheus-port", c.PrometheusPort, "HTTP port to use to export prometheus metrics.")
+	fs.StringVar(&c.PrometheusPath, "prometheus-path", c.PrometheusPath, "HTTP path to use to export metrics.")
+	fs.StringVar(&c.PrometheusNamespace, "prometheus-namespace", c.PrometheusNamespace, "Prometheus metric namespace.")
 }
